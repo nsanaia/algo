@@ -36,3 +36,81 @@ vector<string> Solution::wordBreak(string A, vector<string> &B) {
     sort(res.begin(), res.end());
     return res;
 }
+
+
+// ************************************ second more complicagted *******************
+#include <bits/stdc++.h>
+
+struct TrieNode {
+	unordered_map<char, TrieNode*> children;
+	bool isEnd;
+};
+
+class Trie {
+	private:
+		TrieNode* root;
+	public:
+		Trie() {
+			root = new TrieNode();
+		}
+		
+		void add(string& word) {
+			TrieNode* curr = root;
+			
+			for (auto ch : word) {
+				auto& children = curr -> children;
+				if (children.find(ch) == children.end())
+					children[ch] = new TrieNode();
+				
+				curr = children[ch];
+			}
+			
+			curr -> isEnd = true;
+		}
+		
+		TrieNode* getRoot() {
+			return root;
+		}
+		
+};
+
+vector<string> wordBreakHelper(string& A, int startIdx, Trie& trie) {
+	vector<string> res;
+	
+	if (startIdx == A.size()) {
+		res.push_back("");
+		return res;
+	}
+	
+	TrieNode* curr = root;
+	
+	for (int i = startIdx; i < A.size(); i++) {
+		char ch = A[i];
+		auto& children = curr -> children;
+		if (children.find(ch) == children.end())
+			break;
+		
+		curr = children[ch];
+		if (curr -> isEnd) {
+			string word = A.susbtr(startIdx, i - startIdx + 1);
+			auto currRes = wordBreakHelper(A, i + 1, trie);
+			
+			for (auto& lastPart : currRes) 
+				res.push_back(word + " " + lastPart);
+			
+		}		
+	}
+	
+	return res;
+}
+
+
+vector<string> Solution::wordBreak(string A, vector<string> &B) {
+	Trie trie;
+	
+	for (auto& word : B)
+		trie.add(word);
+		
+	return wordBreakHelper(A, 0, trie);
+	return res;
+}
