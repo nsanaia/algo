@@ -1,0 +1,1 @@
+string(str1.begin() + str1.find(' '), str1.end());
